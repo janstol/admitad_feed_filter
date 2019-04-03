@@ -53,11 +53,24 @@ class AliexpressFeedFilter(threading.Thread):
 		:param writer:
 		:param row:
 		"""
-		end_date = datetime.strptime(str(row[self.__cols['endDate']]), '%Y-%m-%d')
-		commission = float(row[self.__cols['commissionRate']].rstrip("%"))
+		if str(row[self.__cols['endDate']]) == '':
+			end_date = None
+		else:
+			end_date = datetime.strptime(str(row[self.__cols['endDate']]), '%Y-%m-%d')
+
+		if row[self.__cols['commissionRate']] == '':
+			commission = None
+		else:
+			commission = float(row[self.__cols['commissionRate']].rstrip("%"))
+
 		category = str(row[self.__cols['categoryId']])
 
-		if commission >= self.commission and self.end_date <= end_date and category not in self.categories:
+		row[self.__cols['image']] = str(row[self.__cols['image']]).encode('utf-8')
+		row[self.__cols['name']] = str(row[self.__cols['name']]).encode('utf-8')
+		row[self.__cols['title']] = str(row[self.__cols['title']]).encode('utf-8')
+		row[self.__cols['url']] = str(row[self.__cols['url']]).encode('utf-8')
+
+		if end_date is not None and commission is not None and commission >= self.commission and self.end_date <= end_date and category not in self.categories:
 			writer.writerow(row)
 
 	def __get_output_filepath(self, part):
@@ -76,7 +89,7 @@ class AliexpressFeedFilter(threading.Thread):
 		output_name = self.__get_output_filepath(file_part)
 
 		# open input (unfiltered) file for reading
-		with open(self.file, 'r') as input_csv:
+		with open(self.file, 'r', encoding="utf8") as input_csv:
 			self.queue.put({'progress': None, 'message': "Opening '{}' file for reading...".format(self.file)})
 			reader = csv.reader(input_csv, delimiter=';', lineterminator='\n')
 
@@ -88,7 +101,7 @@ class AliexpressFeedFilter(threading.Thread):
 			reader = csv.reader(input_csv, delimiter=';', lineterminator='\n')
 
 			try:
-				output_csv = open(output_name, 'w')
+				output_csv = open(output_name, 'w', encoding="utf-8")
 			except PermissionError:
 				self.queue.put(
 					{'progress': 100, 'message': "ERROR: Permission denied '{}'".format(os.path.basename(output_name))})
