@@ -65,11 +65,6 @@ class AliexpressFeedFilter(threading.Thread):
 
 		category = str(row[self.__cols['categoryId']])
 
-		row[self.__cols['image']] = str(row[self.__cols['image']]).encode('utf-8')
-		row[self.__cols['name']] = str(row[self.__cols['name']]).encode('utf-8')
-		row[self.__cols['title']] = str(row[self.__cols['title']]).encode('utf-8')
-		row[self.__cols['url']] = str(row[self.__cols['url']]).encode('utf-8')
-
 		if end_date is not None and commission is not None and commission >= self.commission and self.end_date <= end_date and category not in self.categories:
 			writer.writerow(row)
 
@@ -89,7 +84,7 @@ class AliexpressFeedFilter(threading.Thread):
 		output_name = self.__get_output_filepath(file_part)
 
 		# open input (unfiltered) file for reading
-		with open(self.file, 'r', encoding="utf8") as input_csv:
+		with open(self.file, 'r', encoding="utf-8") as input_csv:
 			self.queue.put({'progress': None, 'message': "Opening '{}' file for reading...".format(self.file)})
 			reader = csv.reader(input_csv, delimiter=';', lineterminator='\n')
 

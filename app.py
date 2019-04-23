@@ -6,7 +6,7 @@ class AdmitadFeedFilterApp(Tk):
 
 	def __init__(self, *args, **kwargs):
 		Tk.__init__(self, *args, **kwargs)
-		self.title('Aliexpress Feed Filter (v0.1.0)')
+		self.title('Aliexpress Feed Filter (v0.1.1)')
 		# Tk.iconbitmap(self, default=icon.ico)
 
 		w, h = 500, 370  # window width, height
